@@ -70,6 +70,24 @@ def test_config(tmpdir, monkeypatch):
         config.get("BOOL_AS_INT", cast=bool)
 
 
+def test_config_contains(tmpdir, monkeypatch):
+    path = os.path.join(tmpdir, ".env")
+    with open(path, "w") as file:
+        file.write("# Do not commit to source control\n")
+        file.write("CONFIG_VAR_FROM_ENV_FILE=someconfig\n")
+        file.write("\n")
+        file.write("\n")
+
+    config = Config(Path(path))
+    assert "CONFIG_VAR_FROM_ENV_FILE" in config
+    assert "CONFIG_VAR_NOT_IN_ENV_FILE" not in config
+
+    config = Config()
+    monkeypatch.setenv("CONFIG_VAR_FROM_ENVIRONMENT", "123")
+    assert "CONFIG_VAR_FROM_ENVIRONMENT" in config
+    assert "CONFIG_VAR_NOT_IN_ENVIRONMENT" not in config
+
+
 def test_environ():
     environ = Environ()
 

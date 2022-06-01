@@ -1,3 +1,4 @@
+from operator import truediv
 import os
 import typing
 from collections.abc import MutableMapping
@@ -94,6 +95,14 @@ class Config:
         default: typing.Any = undefined,
     ) -> typing.Any:
         return self.get(key, cast, default)
+
+    def __contains__(
+        self,
+        key: str
+    ) -> bool:
+        if key in self.environ or key in self.file_values:
+            return True
+        return False
 
     def get(
         self,
